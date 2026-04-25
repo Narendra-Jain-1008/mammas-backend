@@ -1,8 +1,6 @@
 [build]
 builder = "nixpacks"
-
-[build.buildCommand]
-cmd = "cd apps/backend && npm install --legacy-peer-deps && npm run build"
+buildCommand = "cd apps/backend && npm install --legacy-peer-deps && npm run build"
 
 [deploy]
 startCommand = "cd apps/backend && npm run start"
