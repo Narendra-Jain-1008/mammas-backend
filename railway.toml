@@ -3,5 +3,5 @@ builder = "nixpacks"
 buildCommand = "cd apps/backend && npm install --legacy-peer-deps && npm run build"
 
 [deploy]
-startCommand = "node /app/apps/backend/.medusa/server/src/main.js"
+startCommand = "cd /app/apps/backend && npx medusa db:migrate && npm run start"
 restartPolicyType = "on_failure"
