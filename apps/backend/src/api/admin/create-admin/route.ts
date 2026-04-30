@@ -3,6 +3,7 @@ import {
   MedusaResponse,
 } from "@medusajs/framework/http"
 import { createUsersWorkflow } from "@medusajs/medusa/core-flows"
+import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 
 export async function POST(
   req: AuthenticatedMedusaRequest,
@@ -19,12 +20,23 @@ export async function POST(
   const { result } = await createUsersWorkflow(req.scope).run({
     input: {
       users: [{ email, first_name, last_name }],
-      authIdentityId,
     },
   })
 
-  res.json({ 
-    user: result[0], 
-    message: "Admin user created successfully" 
+  const createdUser = result[0]
+
+  const remoteLink = req.scope.resolve(ContainerRegistrationKeys.REMOTE_LINK)
+  await remoteLink.create({
+    [Modules.AUTH]: {
+      auth_identity_id: authIdentityId,
+    },
+    [Modules.USER]: {
+      user_id: createdUser.id,
+    },
+  })
+
+  res.json({
+    user: createdUser,
+    message: "Admin user created successfully"
   })
 }
