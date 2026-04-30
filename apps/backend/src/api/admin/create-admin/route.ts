@@ -2,8 +2,7 @@ import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import { createUserWorkflow } from "@medusajs/medusa/core-flows"
-import { Modules } from "@medusajs/framework/utils"
+import { createUsersWorkflow } from "@medusajs/medusa/core-flows"
 
 export async function POST(
   req: AuthenticatedMedusaRequest,
@@ -17,12 +16,15 @@ export async function POST(
 
   const authIdentityId = req.auth_context.auth_identity_id
 
-  const { result: user } = await createUserWorkflow(req.scope).run({
+  const { result } = await createUsersWorkflow(req.scope).run({
     input: {
-      user: { email, first_name, last_name },
+      users: [{ email, first_name, last_name }],
       authIdentityId,
     },
   })
 
-  res.json({ user, message: "Admin user created successfully" })
+  res.json({ 
+    user: result[0], 
+    message: "Admin user created successfully" 
+  })
 }
